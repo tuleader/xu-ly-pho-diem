@@ -7,7 +7,7 @@ def round_to_nearest_quarter(score):
     return round(score * 4) / 4
 
 # Đọc dữ liệu từ file Excel
-data_path = r'/home/tuleader/Documents/phodiem/data.xlsx'  # Thay bằng đường dẫn đến file của bạn
+data_path = r'D:\Docs_Github\xu-ly-pho-diem\Đề thi khảo sát - Số 01 - Lớp 12 - Thầy VNA (Câu trả lời) (1).xlsx'  # Thay bằng đường dẫn đến file của bạn
 data = pd.read_excel(data_path)
 
 # Chuẩn bị dữ liệu
