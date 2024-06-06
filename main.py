@@ -7,7 +7,7 @@ def round_to_nearest_quarter(score):
     return round(score * 4) / 4
 
 # Đọc dữ liệu từ file Excel
-data_path = r'D:\Docs_Github\xu-ly-pho-diem\Đề thi khảo sát - Số 01 - Lớp 12 - Thầy VNA (Câu trả lời) (1).xlsx'  # Thay bằng đường dẫn đến file của bạn
+data_path = r'form.xlsx'  # Thay bằng đường dẫn đến file của bạn
 data = pd.read_excel(data_path)
 
 # Chuẩn bị dữ liệu
@@ -34,11 +34,11 @@ rounded_score_data = pd.DataFrame({
 
 # Hàm vẽ biểu đồ phổ điểm theo chiều dọc
 def plot_vertical_distribution():
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 8))
     plt.bar(rounded_score_data['Score'], rounded_score_data['Number of Students'], width=0.2, edgecolor='black', color='blue', align='center')
     plt.xlabel('Điểm')
     plt.ylabel('Số lượng thí sinh')
-    plt.title('Phổ điểm Đề thi khảo sát - Số 01 - Lớp 12 - Thầy VNA')
+    plt.title('Phổ Điểm Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 2 - Thầy VNA')
 
     for i, v in enumerate(rounded_score_data['Number of Students']):
         plt.text(rounded_score_data['Score'][i], v + 3, str(v), ha='center', color='black')
@@ -55,7 +55,7 @@ def plot_horizontal_distribution():
     plt.barh(rounded_score_data['Score'], rounded_score_data['Number of Students'], height=0.2, edgecolor='black', color='blue', align='center')
     plt.ylabel('Điểm')
     plt.xlabel('Số lượng thí sinh')
-    plt.title('Phổ điểm Đề thi khảo sát - Số 01 - Lớp 12 - Thầy VNA')
+    plt.title('Phổ Điểm Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 2 - Thầy VNA')
 
     for i, v in enumerate(rounded_score_data['Number of Students']):
         plt.text(v + 3, rounded_score_data['Score'][i], str(v), va='center', color='black')

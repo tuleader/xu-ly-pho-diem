@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Đọc dữ liệu từ file Excel
-data_path = r'D:\Docs_Github\xu-ly-pho-diem\Đề thi khảo sát - Số 01 - Lớp 12 - Thầy VNA (Câu trả lời) (1).xlsx'
+data_path = r'D:\Docs_Github\xu-ly-pho-diem\Bản sao của Đề kiểm tra bắt buộc - Số 01 - Lớp 11 - Thầy VNA (Câu trả lời) (1).xlsx' 
 data = pd.read_excel(data_path)
 
 # Chuẩn bị dữ liệu
@@ -30,7 +30,7 @@ def plot_vertical_distribution():
     plt.bar(x_indexes, score_data['Number of Students'], width=0.8, edgecolor='black', color='blue', align='center')
     plt.xlabel('Điểm')
     plt.ylabel('Số lượng thí sinh')
-    plt.title('Phổ điểm Đề thi khảo sát - Số 01 - Lớp 12 - Thầy VNA')
+    plt.title('Phổ điểm Đề thi khảo sát - Số 01 - Lớp 11 - Thầy VNA')
     
     # Thêm nhãn cho từng cột
     for i, v in enumerate(score_data['Number of Students']):
