@@ -7,11 +7,11 @@ def round_to_nearest_quarter(score):
     return round(score * 4) / 4
 
 # Đọc dữ liệu từ file Excel
-data_path = r'form.xlsx'  # Thay bằng đường dẫn đến file của bạn
+data_path = r'Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 5 - Thầy VNA (Câu trả lời).xlsx'  # Thay bằng đường dẫn đến file của bạn
 data = pd.read_excel(data_path)
 
 # Chuẩn bị dữ liệu
-scores = data['Unnamed: 5'].dropna()
+scores = data['Unnamed: 4'].dropna()
 scores = pd.to_numeric(scores, errors='coerce').dropna()
 rounded_scores = scores.apply(round_to_nearest_quarter)
 rounded_score_counts = rounded_scores.value_counts().sort_index()
@@ -38,7 +38,7 @@ def plot_vertical_distribution():
     plt.bar(rounded_score_data['Score'], rounded_score_data['Number of Students'], width=0.2, edgecolor='black', color='blue', align='center')
     plt.xlabel('Điểm')
     plt.ylabel('Số lượng thí sinh')
-    plt.title('Phổ Điểm Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 2 - Thầy VNA')
+    plt.title('Phổ Điểm Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 5 - Thầy VNA')
 
     for i, v in enumerate(rounded_score_data['Number of Students']):
         plt.text(rounded_score_data['Score'][i], v + 3, str(v), ha='center', color='black')
@@ -46,7 +46,7 @@ def plot_vertical_distribution():
     plt.grid(True, linestyle='--')
     plt.xticks(np.arange(0, 10.25, 0.25), rotation=90)
     plt.tight_layout()
-    plt.savefig('vertical_distribution.png')
+    plt.savefig('pho_diem_doc.png')
     plt.show()
 
 # Hàm vẽ biểu đồ phổ điểm theo chiều ngang
@@ -55,7 +55,7 @@ def plot_horizontal_distribution():
     plt.barh(rounded_score_data['Score'], rounded_score_data['Number of Students'], height=0.2, edgecolor='black', color='blue', align='center')
     plt.ylabel('Điểm')
     plt.xlabel('Số lượng thí sinh')
-    plt.title('Phổ Điểm Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 2 - Thầy VNA')
+    plt.title('Phổ Điểm Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 5 - Thầy VNA')
 
     for i, v in enumerate(rounded_score_data['Number of Students']):
         plt.text(v + 3, rounded_score_data['Score'][i], str(v), va='center', color='black')
@@ -63,7 +63,7 @@ def plot_horizontal_distribution():
     plt.grid(True, linestyle='--')
     plt.yticks(np.arange(0, 10.25, 0.25))
     plt.tight_layout()
-    plt.savefig('horizontal_distribution.png')
+    plt.savefig('pho_diem_ngang.png')
     plt.show()
 
 # Hàm tạo bảng số liệu thống kê
@@ -95,7 +95,7 @@ def plot_statistics_table():
     ax.table(cellText=stats_df.values, colLabels=stats_df.columns, cellLoc='center', loc='center')
 
     plt.tight_layout()
-    plt.savefig('statistics_table.png')
+    plt.savefig('so_lieu_thong_ke.png')
     plt.show()
 
 # Gọi các hàm để vẽ biểu đồ và in bảng số liệu thống kê
