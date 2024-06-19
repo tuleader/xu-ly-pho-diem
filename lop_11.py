@@ -7,7 +7,7 @@ def round_to_nearest_quarter(score):
     return round(score * 4) / 4
 
 # Đọc dữ liệu từ file Excel
-data_path = r'Đề Chuẩn Cấu Trúc Ma Trận 2024 - Đề số 5 - Thầy VNA (Câu trả lời).xlsx'  # Thay bằng đường dẫn đến file của bạn
+data_path = r'form.xlsx'  # Thay bằng đường dẫn đến file của bạn
 data = pd.read_excel(data_path)
 
 # Chuẩn bị dữ liệu
@@ -34,7 +34,7 @@ rounded_score_data = pd.DataFrame({
 
 # Hàm vẽ biểu đồ phổ điểm theo chiều dọc
 def plot_vertical_distribution():
-    plt.figure(figsize=(14, 8))
+    plt.figure(figsize=(14, 8), dpi=274)  # Kích thước ảnh là 14x8 inch, độ phân giải 274 dpi để đạt 3840x2160 pixel
     plt.bar(rounded_score_data['Score'], rounded_score_data['Number of Students'], width=0.2, edgecolor='black', color='blue', align='center')
     plt.xlabel('Điểm')
     plt.ylabel('Số lượng thí sinh')
@@ -46,12 +46,12 @@ def plot_vertical_distribution():
     plt.grid(True, linestyle='--')
     plt.xticks(np.arange(0, 10.25, 0.25), rotation=90)
     plt.tight_layout()
-    plt.savefig('pho_diem_doc.png')
+    plt.savefig('pho_diem_doc.png', dpi=274)  # Đảm bảo độ phân giải ảnh là 3840x2160
     plt.show()
 
 # Hàm vẽ biểu đồ phổ điểm theo chiều ngang
 def plot_horizontal_distribution():
-    plt.figure(figsize=(14, 10))
+    plt.figure(figsize=(14, 10), dpi=274)  # Kích thước ảnh là 14x10 inch, độ phân giải 274 dpi để đạt 3840x2160 pixel
     plt.barh(rounded_score_data['Score'], rounded_score_data['Number of Students'], height=0.2, edgecolor='black', color='blue', align='center')
     plt.ylabel('Điểm')
     plt.xlabel('Số lượng thí sinh')
@@ -63,7 +63,7 @@ def plot_horizontal_distribution():
     plt.grid(True, linestyle='--')
     plt.yticks(np.arange(0, 10.25, 0.25))
     plt.tight_layout()
-    plt.savefig('pho_diem_ngang.png')
+    plt.savefig('pho_diem_ngang.png', dpi=274)  # Đảm bảo độ phân giải ảnh là 3840x2160
     plt.show()
 
 # Hàm tạo bảng số liệu thống kê
@@ -89,16 +89,38 @@ def plot_statistics_table():
 
     stats_df = pd.DataFrame(stats_data)
 
-    fig, ax = plt.subplots(figsize=(8, 4))
+    fig, ax = plt.subplots(figsize=(8, 4), dpi=480)  # Kích thước ảnh là 8x4 inch, độ phân giải 480 dpi để đạt 3840x2160 pixel
     ax.axis('tight')
     ax.axis('off')
     ax.table(cellText=stats_df.values, colLabels=stats_df.columns, cellLoc='center', loc='center')
 
     plt.tight_layout()
-    plt.savefig('so_lieu_thong_ke.png')
+    plt.savefig('so_lieu_thong_ke.png', dpi=480)  # Đảm bảo độ phân giải ảnh là 3840x2160
     plt.show()
 
+# Hàm thống kê điểm theo mẫu và xuất ra ảnh
+def display_score_summary_image():
+    score_summary = {
+        'Điểm': ['Tổng số thí sinh', 'Số học sinh đạt điểm 10', 'Số học sinh đạt điểm 9.75', 'Số học sinh đạt điểm 9.50', 'Số học sinh đạt điểm 9.25', 'Số học sinh đạt điểm 9.00'],
+        'Số lượng': [len(scores), rounded_score_counts.get(10, 0), rounded_score_counts.get(9.75, 0), rounded_score_counts.get(9.5, 0), rounded_score_counts.get(9.25, 0), rounded_score_counts.get(9, 0)]
+    }
+    summary_df = pd.DataFrame(score_summary)
+    
+    # Tạo ảnh của bảng
+    fig, ax = plt.subplots(figsize=(8, 4), dpi=240)  # Kích thước ảnh là 8x4 inch, độ phân giải 240 dpi để đạt 1920x1080 pixel
+    ax.axis('tight')
+    ax.axis('off')
+    table = ax.table(cellText=summary_df.values, colLabels=summary_df.columns, cellLoc='center', loc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(12)
+    table.scale(1.2, 1.2)
+    
+    # Lưu ảnh
+    plt.savefig('score_summary_image.png', bbox_inches='tight', dpi=240)  # Đảm bảo độ phân giải ảnh là 1920x1080
+    plt.show()
+    
 # Gọi các hàm để vẽ biểu đồ và in bảng số liệu thống kê
 plot_vertical_distribution()
 plot_horizontal_distribution()
 plot_statistics_table()
+display_score_summary_image()
