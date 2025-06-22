@@ -3,15 +3,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Đọc dữ liệu từ file Excel
-data_path = r'form.xlsx' 
-data = pd.read_excel(data_path)
+file_path = 'form.xlsx'
+df = pd.read_excel(file_path, sheet_name='BXH')
 
-# Chuẩn bị dữ liệu
-scores = data['Unnamed: 4'].dropna()
-scores = pd.to_numeric(scores, errors='coerce').dropna()
+# Cột điểm là cột E (thường là 'Unnamed: 4')
+score_col = df.columns[4]
 
-# Thống kê
-total_students = scores.size
+# Chuyển '9,75' → '9.75' và ép thành float
+scores_raw = df[score_col].astype(str).str.replace(',', '.', regex=False)
+scores = pd.to_numeric(scores_raw, errors='coerce').dropna()
+
+# Thống kê cơ bản
+total_students = len(scores)
 average_score = scores.mean()
 median_score = scores.median()
 mode_score = scores.mode().iloc[0] if not scores.mode().empty else None
@@ -20,97 +23,99 @@ percentage_below_1 = (students_below_1 / total_students) * 100
 students_below_5 = (scores < 5).sum()
 percentage_below_5 = (students_below_5 / total_students) * 100
 
-# Đọc các mức điểm độc đáo từ dữ liệu và sắp xếp chúng
-unique_scores = np.sort(scores.unique())
+# Thống kê số lượng thí sinh theo từng mức điểm
+score_counts = scores.value_counts().sort_index()
 
-# Tính số lượng thí sinh cho mỗi mức điểm độc đáo
-score_counts = scores.value_counts().reindex(unique_scores, fill_value=0)
-
-# Tạo dữ liệu cho biểu đồ
+# Tạo DataFrame để vẽ biểu đồ
 score_data = pd.DataFrame({
-    'Score': unique_scores,
+    'Score': score_counts.index,
     'Number of Students': score_counts.values
 })
 
-# Hàm vẽ biểu đồ phổ điểm theo chiều dọc
+# Biểu đồ phổ điểm
+
+
 def plot_vertical_distribution():
-    plt.figure(figsize=(14, 8), dpi=274)  # Kích thước ảnh là 14x8 inch, độ phân giải 274 dpi để đạt 3840x2160 pixel
-    # Sử dụng chỉ số của mảng cho trục x để đảm bảo khoảng cách đều
-    x_indexes = np.arange(len(unique_scores)) * 1.2  # Tăng khoảng cách giữa các cột
-    plt.bar(x_indexes, score_data['Number of Students'], width=0.8, edgecolor='black', color='blue', align='center')
+    plt.figure(figsize=(14, 8), dpi=274)
+    x_indexes = np.arange(len(score_data)) * 1.2
+    plt.bar(x_indexes, score_data['Number of Students'],
+            width=0.8, edgecolor='black', color='blue')
     plt.xlabel('Điểm')
     plt.ylabel('Số lượng thí sinh')
-    plt.title('Đề Kiểm Tra Toàn Diện Số 1 - Lớp 12 - Thầy VNA')
-    
-    # Thêm nhãn cho từng cột
-    for i, v in enumerate(score_data['Number of Students']):
-        plt.text(x_indexes[i], v + 1, str(v), ha='center', color='black')
+    plt.title('Đề Kiểm Tra Toàn Diện Chương 1 - Thầy VNA - Đề số 2')
 
-    plt.grid(True, linestyle='--')
-    # Đặt nhãn trục x bằng các giá trị điểm duy nhất và xoay 90 độ
-    plt.xticks(x_indexes, labels=[f"{score:.2f}" for score in unique_scores], rotation=90)
+    # Ghi nhãn từng cột
+    for i, v in enumerate(score_data['Number of Students']):
+        plt.text(x_indexes[i], v + 1, str(v),
+                 ha='center', va='bottom', fontsize=9)
+
+    # Hiển thị các mức điểm đầy đủ
+    plt.xticks(
+        x_indexes, [f"{score:.2f}" for score in score_data['Score']], rotation=90)
+    plt.grid(axis='y', linestyle='--', alpha=0.5)
     plt.tight_layout()
-    plt.savefig('vertical_distribution.png', dpi=274)  # Đảm bảo độ phân giải ảnh là 3840x2160
+    plt.savefig('vertical_distribution.png', dpi=274)
     plt.show()
 
-# Hàm tạo bảng số liệu thống kê
+# Bảng thống kê tổng quát
+
+
 def plot_statistics_table():
-    stats_data = {
+    stats = {
         "Statistic": [
-            "Tổng số thí sinh", 
-            "Điểm trung bình", 
-            "Trung vị", 
-            "Số thí sinh đạt điểm <=1", 
-            "Số thí sinh đạt điểm dưới trung bình (<5)", 
-            "Mốc điểm trung bình có nhiều thí sinh đạt được nhất"
+            "Tổng số thí sinh",
+            "Điểm trung bình",
+            "Trung vị",
+            "Số thí sinh đạt điểm ≤ 1",
+            "Số thí sinh dưới trung bình (< 5)",
+            "Mốc điểm phổ biến nhất (mode)"
         ],
         "Value": [
-            total_students, 
-            f"{average_score:.2f}", 
-            f"{median_score:.2f}", 
-            students_below_1, 
-            f"{students_below_5} ({percentage_below_5:.2f}%)", 
-            f"{mode_score:.2f}"
+            total_students,
+            f"{average_score:.2f}",
+            f"{median_score:.2f}",
+            f"{students_below_1} ({percentage_below_1:.2f}%)",
+            f"{students_below_5} ({percentage_below_5:.2f}%)",
+            f"{mode_score:.2f}" if mode_score is not None else "N/A"
         ]
     }
-
-    stats_df = pd.DataFrame(stats_data)
-
-    fig, ax = plt.subplots(figsize=(8, 4), dpi=480)  # Kích thước ảnh là 8x4 inch, độ phân giải 480 dpi để đạt 3840x2160 pixel
-    ax.axis('tight')
+    stats_df = pd.DataFrame(stats)
+    fig, ax = plt.subplots(figsize=(8, 4), dpi=480)
     ax.axis('off')
-    ax.table(cellText=stats_df.values, colLabels=stats_df.columns, cellLoc='center', loc='center')
-
+    ax.table(cellText=stats_df.values, colLabels=stats_df.columns,
+             cellLoc='center', loc='center')
     plt.tight_layout()
-    plt.savefig('so_lieu_thong_ke.png', dpi=480)  # Đảm bảo độ phân giải ảnh là 3840x2160
+    plt.savefig('so_lieu_thong_ke.png', dpi=480)
     plt.show()
 
-# Hàm thống kê điểm theo mẫu và xuất ra ảnh
+# Bảng tổng hợp điểm cao
+
+
 def display_score_summary_image():
-    score_summary = {
-        'Điểm': ['Tổng số thí sinh', 'Số học sinh đạt điểm 10', 'Số học sinh đạt điểm 9.75', 'Số học sinh đạt điểm 9.50', 'Số học sinh đạt điểm 9.25', 'Số học sinh đạt điểm 9.00'],
-        'Số lượng': [len(scores), score_counts.get(10, 0), score_counts.get(9.75, 0), score_counts.get(9.5, 0), score_counts.get(9.25, 0), score_counts.get(9, 0)]
+    summary = {
+        'Điểm': ['Tổng số thí sinh', 'Điểm 10', 'Điểm 9.75', 'Điểm 9.50', 'Điểm 9.25', 'Điểm 9.00'],
+        'Số lượng': [
+            len(scores),
+            score_counts.get(10, 0),
+            score_counts.get(9.75, 0),
+            score_counts.get(9.5, 0),
+            score_counts.get(9.25, 0),
+            score_counts.get(9.0, 0),
+        ]
     }
-    summary_df = pd.DataFrame(score_summary)
-    
-    # Tạo ảnh của bảng
-    fig, ax = plt.subplots(figsize=(8, 4), dpi=480)  # Kích thước ảnh là 8x4 inch, độ phân giải 480 dpi để đạt 3840x2160 pixel
-    ax.axis('tight')
+    summary_df = pd.DataFrame(summary)
+    fig, ax = plt.subplots(figsize=(8, 4), dpi=480)
     ax.axis('off')
-    table = ax.table(cellText=summary_df.values, colLabels=summary_df.columns, cellLoc='center', loc='center')
+    table = ax.table(cellText=summary_df.values,
+                     colLabels=summary_df.columns, cellLoc='center', loc='center')
     table.auto_set_font_size(False)
     table.set_fontsize(12)
     table.scale(1.2, 1.2)
-    
-    # Lưu ảnh
-    plt.savefig('score_summary_image.png', bbox_inches='tight', dpi=480)  # Đảm bảo độ phân giải ảnh là 3840x2160
+    plt.savefig('score_summary_image.png', bbox_inches='tight', dpi=480)
     plt.show()
 
-# Gọi hàm để vẽ biểu đồ
+
+# Gọi hàm xuất kết quả
 plot_vertical_distribution()
-
-# Gọi hàm để in bảng số liệu thống kê
 plot_statistics_table()
-
-# Gọi hàm để hiển thị bảng thống kê điểm dưới dạng ảnh
 display_score_summary_image()
